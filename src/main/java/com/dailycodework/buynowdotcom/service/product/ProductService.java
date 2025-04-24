@@ -1,10 +1,9 @@
 package com.dailycodework.buynowdotcom.service.product;
 
+import com.dailycodework.buynowdotcom.dtos.ImageDto;
+import com.dailycodework.buynowdotcom.dtos.ProductDto;
 import com.dailycodework.buynowdotcom.model.*;
-import com.dailycodework.buynowdotcom.repository.CartItemRepository;
-import com.dailycodework.buynowdotcom.repository.CategoryRepository;
-import com.dailycodework.buynowdotcom.repository.OrderItemRepository;
-import com.dailycodework.buynowdotcom.repository.ProductRepository;
+import com.dailycodework.buynowdotcom.repository.*;
 import com.dailycodework.buynowdotcom.request.AddProductRequest;
 import com.dailycodework.buynowdotcom.request.ProductUpdateRequest;
 import jakarta.persistence.EntityExistsException;
@@ -25,6 +24,7 @@ public class ProductService implements IProductService{
     private final CartItemRepository cartItemRepository;
     private final OrderItemRepository orderItemRepository;
     private final ModelMapper modelMapper;
+    private final ImageRepository imageRepository;
 
     @Override
     public Product addProduct(AddProductRequest request) throws EntityNotFoundException {
@@ -135,5 +135,21 @@ public class ProductService implements IProductService{
     @Override
     public List<Product> getProductsByName(String name) {
         return productRepository.findByName(name);
+    }
+
+    @Override
+    public List<ProductDto> getConvertedProducts(List<Product> products) {
+        return products.stream().map(this::convertToDto).toList();
+    }
+
+    @Override
+    public ProductDto convertToDto(Product product) {
+        ProductDto productDto = modelMapper.map(product, ProductDto.class);
+        List<Image> images = imageRepository.findByProductId(product.getId());
+        List<ImageDto> imageDtos = images.stream()
+                .map(image -> modelMapper.map(image, ImageDto.class))
+                .toList();
+        productDto.setImages(imageDtos);
+        return productDto;
     }
 }
