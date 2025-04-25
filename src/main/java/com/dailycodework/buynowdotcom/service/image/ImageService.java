@@ -23,7 +23,8 @@ public class ImageService implements IImageService {
     private final IProductService productService;
     @Override
     public Image getImageById(Long imageId) {
-        return null;
+        return imageRepository.findById(imageId)
+                .orElseThrow(() -> new RuntimeException("Image not found"));
     }
 
     @Override

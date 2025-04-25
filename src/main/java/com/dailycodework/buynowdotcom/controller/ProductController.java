@@ -24,7 +24,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 public class ProductController {
     private final IProductService productService;
 
-    @GetMapping("/products")
+    @GetMapping("/all")
     public ResponseEntity<ApiResponse> getAllProducts() {
         try {
             List<Product> products = productService.getAllProducts();
@@ -50,7 +50,7 @@ public class ProductController {
     public ResponseEntity<ApiResponse> deleteProduct(@PathVariable Long productId) {
         try {
             productService.deleteProduct(productId);
-            return ResponseEntity.ok(new ApiResponse("Product deleted successfully", null));
+            return ResponseEntity.ok(new ApiResponse("Product deleted successfully", productId));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(NOT_FOUND).body(new ApiResponse("Error: ", e.getMessage()));
         }
@@ -89,8 +89,8 @@ public class ProductController {
         }
     }
 
-    @GetMapping("/products/by/name")
-    public ResponseEntity<ApiResponse> getProductsByName(@RequestParam String name) {
+    @GetMapping("/products/{name}/products")
+    public ResponseEntity<ApiResponse> getProductsByName(@PathVariable String name) {
         try {
             List<Product> products = productService.getProductsByName(name);
             List<ProductDto> convertedProducts = productService.getConvertedProducts(products);
