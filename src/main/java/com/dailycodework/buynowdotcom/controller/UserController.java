@@ -21,16 +21,19 @@ public class UserController {
         return ResponseEntity.ok(new ApiResponse("Found ", user));
     }
 
+    @PostMapping("/add")
     public ResponseEntity<ApiResponse> addUser(@RequestBody CreateUserRequest request) {
         User user = userService.createUser(request);
         return ResponseEntity.ok(new ApiResponse("User created successfully", user));
     }
 
+    @PutMapping("/{userId}/update")
     public ResponseEntity<ApiResponse> updateUser(@RequestBody UpdateUserRequest request, @PathVariable Long userId) {
         User user = userService.updateUser(request, userId);
         return ResponseEntity.ok(new ApiResponse("User updated successfully", user));
     }
 
+    @DeleteMapping("/{userId}/delete")
     public ResponseEntity<ApiResponse> deleteUser(@PathVariable Long userId) {
         userService.deleteUser(userId);
         return ResponseEntity.ok(new ApiResponse("User deleted successfully", userId));
