@@ -40,7 +40,12 @@ public class CategoryService implements ICategoryService {
 
     @Override
     public List<Category> getAllCategories() {
-        return categoryRepository.findAll();
+
+        List<Category> categories = categoryRepository.findAll();
+        if(categories.isEmpty()) {
+            throw new EntityNotFoundException("Categories not found");
+        }
+        return categories;
     }
 
     @Override
