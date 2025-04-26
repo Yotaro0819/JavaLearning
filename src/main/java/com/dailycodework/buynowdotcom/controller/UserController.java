@@ -1,5 +1,6 @@
 package com.dailycodework.buynowdotcom.controller;
 
+import com.dailycodework.buynowdotcom.dtos.UserDto;
 import com.dailycodework.buynowdotcom.model.User;
 import com.dailycodework.buynowdotcom.request.CreateUserRequest;
 import com.dailycodework.buynowdotcom.request.UpdateUserRequest;
@@ -18,19 +19,22 @@ public class UserController {
     @GetMapping("/user/{userId}/user")
     public ResponseEntity<ApiResponse> getUserById(@PathVariable Long userId) {
         User user = userService.getUserById(userId);
-        return ResponseEntity.ok(new ApiResponse("Found ", user));
+        UserDto userDto = userService.convertToDto(user);
+        return ResponseEntity.ok(new ApiResponse("Found ", userDto));
     }
 
     @PostMapping("/add")
     public ResponseEntity<ApiResponse> addUser(@RequestBody CreateUserRequest request) {
         User user = userService.createUser(request);
-        return ResponseEntity.ok(new ApiResponse("User created successfully", user));
+        UserDto userDto = userService.convertToDto(user);
+        return ResponseEntity.ok(new ApiResponse("User created successfully", userDto));
     }
 
     @PutMapping("/{userId}/update")
     public ResponseEntity<ApiResponse> updateUser(@RequestBody UpdateUserRequest request, @PathVariable Long userId) {
         User user = userService.updateUser(request, userId);
-        return ResponseEntity.ok(new ApiResponse("User updated successfully", user));
+        UserDto userDto = userService.convertToDto(user);
+        return ResponseEntity.ok(new ApiResponse("User updated successfully", userDto));
     }
 
     @DeleteMapping("/{userId}/delete")

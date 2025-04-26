@@ -1,11 +1,6 @@
 package com.dailycodework.buynowdotcom.dtos;
 
 import com.dailycodework.buynowdotcom.model.Category;
-import com.dailycodework.buynowdotcom.model.Image;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import lombok.Data;
 
 import java.math.BigDecimal;

@@ -1,5 +1,10 @@
 package com.dailycodework.buynowdotcom.service.user;
 
+import com.dailycodework.buynowdotcom.dtos.ImageDto;
+import com.dailycodework.buynowdotcom.dtos.ProductDto;
+import com.dailycodework.buynowdotcom.dtos.UserDto;
+import com.dailycodework.buynowdotcom.model.Image;
+import com.dailycodework.buynowdotcom.model.Product;
 import com.dailycodework.buynowdotcom.model.User;
 import com.dailycodework.buynowdotcom.repository.UserRepository;
 import com.dailycodework.buynowdotcom.request.CreateUserRequest;
@@ -7,8 +12,10 @@ import com.dailycodework.buynowdotcom.request.UpdateUserRequest;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -17,6 +24,7 @@ import java.util.Optional;
 public class UserService implements IUserService {
 
     private final UserRepository userRepository;
+    private final ModelMapper modelMapper;
     @Override
     public User createUser(CreateUserRequest request) {
         return Optional.of(request)
@@ -53,4 +61,13 @@ public class UserService implements IUserService {
                     throw new EntityNotFoundException("User not found");
                 });
     }
+
+    public List<UserDto> getConvertedUsers(List<User> users) {
+        return users.stream().map(this::convertToDto).toList();
+    }
+
+    public UserDto convertToDto(User user) {
+        return new UserDto(user.getId(), user.getFirstName(), user.getLastName(), user.getEmail());
+    }
+
 }
