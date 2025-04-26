@@ -124,12 +124,8 @@ public class ProductController {
 
     @PostMapping("/add")
     public ResponseEntity<ApiResponse> addProduct(@RequestBody AddProductRequest request) {
-        try {
             Product product = productService.addProduct(request);
             ProductDto productDto = productService.convertToDto(product);
             return ResponseEntity.ok(new ApiResponse("Product added successfully", productDto));
-        } catch (EntityExistsException e) {
-            return ResponseEntity.status(CONFLICT).body(new ApiResponse(e.getMessage(), null));
-        }
     }
 }
