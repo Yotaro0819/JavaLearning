@@ -76,7 +76,7 @@ public class ProductService implements IProductService{
     @Override
     public Product getProductById(Long productId) {
         return productRepository.findById(productId)
-                .orElseThrow(() -> new EntityNotFoundException("Product not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Product searched by id not found"));
     }
 
     @Override
@@ -114,27 +114,49 @@ public class ProductService implements IProductService{
 
     @Override
     public List<Product> getProductsByCategoryAndBrand(String category, String brand) {
-        return productRepository.findByCategoryNameAndBrand(category, brand);
+        List<Product> products = productRepository.findByCategoryNameAndBrand(category, brand);
+        if(products.isEmpty()) {
+            throw new EntityNotFoundException("Product searched by category and brand not found");
+        }
+        return products;
     }
 
     @Override
     public List<Product> getProductsByCategory(String category) {
-        return productRepository.findByCategoryName(category);
+        List<Product> products = productRepository.findByCategoryName(category);
+        if(products.isEmpty()) {
+            throw new EntityNotFoundException("Product searched by category not found");
+        }
+        return products;
     }
 
     @Override
     public List<Product> getProductsByBrandAndName(String brand, String name) {
-        return productRepository.findByBrandAndName(brand, name);
+        List<Product> products = productRepository.findByBrandAndName(brand, name);
+        if(products.isEmpty()) {
+            throw new EntityNotFoundException("Product searched by brand and name not found");
+        }
+        return products;
     }
 
     @Override
     public List<Product> getProductsByBrand(String brand) {
-        return productRepository.findByBrand(brand);
+
+        List<Product> products = productRepository.findByBrand(brand);
+        if(products.isEmpty()) {
+            throw new EntityNotFoundException("Product searched by brand not found");
+        }
+        return products;
     }
 
     @Override
     public List<Product> getProductsByName(String name) {
-        return productRepository.findByName(name);
+
+        List<Product> products =  productRepository.findByName(name);
+        if (products.isEmpty()) {
+            throw new EntityNotFoundException("Product  searched by name not found");
+        }
+        return products;
     }
 
     @Override
