@@ -43,6 +43,8 @@ public class Cart {
 
     public void clearCart() {
         this.items.clear();
+//        private Set<CartItem> items = new HashSet<>();
+//        HashSetなのでitemsは箱のような入れ物 このitemsの中身を削除する
         updateTotalAmount();
     }
 }

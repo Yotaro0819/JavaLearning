@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.HashSet;
 
 @Getter
 @Setter
@@ -28,4 +29,10 @@ public class Order {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    public void setOrderItems(HashSet<OrderItem> orderItems) {
+    }
+
+    public void setTotalAmount(BigDecimal bigDecimal) {
+    }
 }

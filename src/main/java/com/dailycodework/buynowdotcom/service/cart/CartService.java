@@ -37,7 +37,7 @@ public class CartService implements ICartService {
 //        自分自身のmethodはそのまま呼び出せる(cartService.getCartではない)
         Cart cart = getCart(cartId);
         cartItemRepository.deleteAllByCartId(cartId);
-        cart.clearCart();
+        cart.clearCart(); // cart entityのclearCart();
         cartRepository.deleteById(cartId);
     }
 
