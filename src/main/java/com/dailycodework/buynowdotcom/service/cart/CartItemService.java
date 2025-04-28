@@ -7,8 +7,11 @@ import com.dailycodework.buynowdotcom.repository.CartItemRepository;
 import com.dailycodework.buynowdotcom.repository.CartRepository;
 import com.dailycodework.buynowdotcom.service.product.IProductService;
 import com.dailycodework.buynowdotcom.service.product.ProductService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
 
 @Service
 @RequiredArgsConstructor
@@ -26,34 +29,55 @@ public class CartItemService implements ICartItemService {
                 .filter(item -> item.getProduct().getId().equals(productId))
                 .findFirst().orElse(new CartItem());
         //CartItemのitemをlistで取得してstreamというベルトコンベアに載せる。
-
-        if(cartItem.getId() == null){
+        //すでに商品があればfindFirst,なければ新しく作成する。
+        if (cartItem.getId() == null) {
+            //商品が見つからない時
             cartItem.setCart(cart);
             cartItem.setProduct(product);
             cartItem.setQuantity(quantity);
             cartItem.setUnitPrice(product.getPrice());
-        }
-        else {
+        } else {
+            //商品が見つかったら足す
             cartItem.setQuantity(cartItem.getQuantity() + quantity);
         }
         cartItem.setTotalPrice();
-        cart.addItem(cartId);
+        cart.addItem(cartItem);
         cartItemRepository.save(cartItem);
         cartRepository.save(cart);
     }
 
     @Override
     public void removeItemFromCart(Long cartId, Long productId) {
+        Cart cart = cartService.getCart(cartId);
+        CartItem itemToRemove = getCartItem(cartId, productId);
+        cart.removeItem(itemToRemove);
 
+        cartRepository.save(cart);
     }
 
     @Override
-    public void updateQuantity(Long cartId, Long productId, int quantity) {
-
+    public void updateItemQuantity(Long cartId, Long productId, int quantity) {
+        Cart cart = cartService.getCart(cartId);
+        cart.getItems().stream().filter(item -> item.getProduct().getId().equals(productId))
+                .findFirst().ifPresent(item -> {
+//                    もし見つかればifPresentを実行
+                    item.setQuantity(quantity);
+                    item.setUnitPrice(item.getProduct().getPrice());
+                    item.setTotalPrice();//CartItemのエンティティのmethod
+                });
+        BigDecimal totalAmount = cart.getItems().stream().map(CartItem::getTotalPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        //reduceは並べられたデータを一つずつ足していくイメージ
+//                BigDecimal.ZEROは new BigDecimal("0")と一緒.始まりの値を定義
+//                :: addは足し算の指示.::subtractとすると引き算していくこともできる
+        cart.setTotalAmount(totalAmount);
+        cartRepository.save(cart);
     }
 
     @Override
     public CartItem getCartItem(Long cartId, Long productId) {
-        return null;
+        Cart cart = cartService.getCart(cartId);
+        return cart.getItems().stream().filter(item -> item.getProduct().getId().equals(productId))
+                .findFirst().orElseThrow(() -> new EntityNotFoundException("Cart not found"));
     }
 }
